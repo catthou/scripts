@@ -6,12 +6,13 @@
 # A non-interactive replacement for mysql_secure_installation
 #
 # HI: We desire to proceed even if the root user has a password.
-#     In this case the provided password should be the root password.
-#     Therefore...  If no root password: establish it and secure MySQL.
-#                   If there is a password: use it to secure MySQL.
+# ?_! In this case the provided password should be the root password.
+# ?_! Therefore...  If no root password: establish it and secure MySQL.
+# ?_!               If there is a password: use it to secure MySQL.
 #
 # Tested on CentOS 6, CentOS 7, Ubuntu 12.04 LTS (Precise Pangolin), Ubuntu
 # 14.04 LTS (Trusty Tahr).
+# HI: Tested on Debian 8 (Jessie)
 
 set -o errexit # abort on nonzero exitstatus
 set -o nounset # abort on unbound variable
@@ -67,11 +68,11 @@ fi
 if is_mysql_root_password_set; then
   # HI: Log in with the provided password and trash the setpassword command.
   echo "Database root password already set"
-  lockdown="mysql --user=root -p$db_root_password"
+  lockdown="mysql --user=root -p${db_root_password}"
   setpassword=
 fi
 
-$lockdown <<_EOF_
+$lockdown << _EOF_
   $setpassword
   DELETE FROM mysql.user WHERE User='';
   DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
